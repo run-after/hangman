@@ -31,60 +31,68 @@ class Player
 end
 
 class Game
-    attr_reader :computer
-    attr_reader :human
+    attr_reader :answer
+    attr_reader :guess
   def initialize
-    @computer = Computer.new.word_selection
-    @human = Player.new(@computer.length).guess
+    @answer = Computer.new.word_selection
+    @guess = Player.new(answer.length).guess
   end
   
   def play
+
     round = 1
-    man = 0
+    stick_man = 0
     missed = Array.new
     
-    until man == 6
-      if computer.chars == human
-        puts "You win! It was '#{computer}!'"
+    until stick_man == 6
+      if answer.chars == guess
+        puts "You win! It was '#{answer}!'"
         break
       end
       puts "Round #{round}"
       puts
-      puts @human.join(" ")
+      puts guess.join(" ")
       puts
       puts "Missed:"
       puts missed.join(", ")
       puts
       print "Guess? "
       letter = gets.chomp
-      
-      if @computer.include?(letter) && !@human.include?(letter)
-        @computer.chars.each_with_index do |x, index|
+      puts
+      if answer.include?(letter) && !guess.include?(letter)
+        answer.chars.each_with_index do |x, index|
           if letter == x
-            @human[index] = letter
+            guess[index] = letter
           end
         end
         round += 1
-      elsif !missed.include?(letter) && !@human.include?(letter)
-        man += 1
+        puts "Correct..."
+      elsif !missed.include?(letter) && !guess.include?(letter)
+        stick_man += 1
         missed << letter
         round += 1
+        puts "Wrong..."
       else
         puts "You already guessed that one!"
       end
-      if man == 6
+      if stick_man == 6
         puts "LOSER!" 
-        puts "It was '#{computer}'!"
+        puts "It was '#{answer}'!"
       else
-        puts "OK... man @ #{man}, #{6 - man} left..."
+        puts "You've got #{6 - stick_man} guesses left..."
+        puts
       end
     end
+  end
+
+  def play_round
+
 
   end
 
 end
 
-game = Game.new
-game.play
+Game.new.play
 
 #probably break up the play method into a few other methods
+#move the correct... youve got x guesses left so if you win it doesn't show
