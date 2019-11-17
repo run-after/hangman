@@ -39,11 +39,15 @@ class Game
   end
   
   def play
-    round = 0
+    round = 1
     man = 0
     missed = Array.new
-    p computer
-    until man == 6 || computer.chars == human
+    
+    until man == 6
+      if computer.chars == human
+        puts "You win! It was '#{computer}!'"
+        break
+      end
       puts "Round #{round}"
       puts
       puts @human.join(" ")
@@ -51,11 +55,15 @@ class Game
       puts "Missed:"
       puts missed.join(", ")
       puts
-      puts "Guess?"
+      print "Guess? "
       letter = gets.chomp
+      
       if @computer.include?(letter) && !@human.include?(letter)
-        x = @computer.index(letter)
-        @human[x] = letter
+        @computer.chars.each_with_index do |x, index|
+          if letter == x
+            @human[index] = letter
+          end
+        end
         round += 1
       elsif !missed.include?(letter) && !@human.include?(letter)
         man += 1
@@ -64,19 +72,19 @@ class Game
       else
         puts "You already guessed that one!"
       end
-      
-      puts "OK... man @ #{man}, #{6 - man} left..."
-    end
-    if man == 6
+      if man == 6
         puts "LOSER!" 
+        puts "It was '#{computer}'!"
       else
-        puts "YOU WIN!"
+        puts "OK... man @ #{man}, #{6 - man} left..."
       end
+    end
+
   end
 
 end
 
 game = Game.new
 game.play
-#working - need to get it to work with words with multiple same letters and
+
 #probably break up the play method into a few other methods
