@@ -78,3 +78,5 @@ end
 
 game = Game.new
 game.play
+#working - need to get it to work with words with multiple same letters and
+#probably break up the play method into a few other methods
