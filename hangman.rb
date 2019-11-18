@@ -32,7 +32,12 @@ class Game
     puts "Would you like to play a (n)ew game or (l)oad a saved one?"
     choice = gets.chomp
     if choice == 'l'
-      #load a saved game
+      print "Enter a filename: "
+      filename = gets.chomp
+      loaded_game = File.readlines("saved_games/#{filename}")
+        loaded_game.each do |line|
+         p line   
+      end
     else
       round = 1
       stick_man = 0
@@ -60,14 +65,16 @@ class Game
           round += 1
           puts "Correct..."
         elsif letter == '*'
-          filename = "#{guess.join("")}.erb"
+          print "Enter filename: "
+          filename = "#{gets.chomp}.csv"
           Dir.mkdir("saved_games") unless Dir.exists? "saved_games"
           File.open("saved_games/#{filename}", 'w') do |file|
-              file.puts "guess = #{guess}"
-              file.puts "answer = #{answer}"
-              file.puts "stick_man = #{stick_man}"
-              file.puts "round = #{round}"
-              file.puts "missed = #{missed}"
+
+              file.puts "guess: #{guess}"
+              file.puts "answer: #{answer}"
+              file.puts "stick_man: #{stick_man}"
+              file.puts "round: #{round}"
+              file.puts "missed: #{missed}"
 
           end
           puts "#{filename} SAVED!"
