@@ -1,10 +1,3 @@
-
-class Board
-  def initialize
-    
-  end
-end
-
 class Computer
   attr_reader :word
   def initialize
@@ -18,7 +11,6 @@ class Computer
     end
     @word.chomp.downcase
   end
-  
 end
 
 class Player
@@ -26,8 +18,6 @@ class Player
   def initialize(size)
     @guess = Array.new(size, "_")
   end
-  
-
 end
 
 class Game
@@ -39,55 +29,69 @@ class Game
   end
   
   def play
-
-    round = 1
-    stick_man = 0
-    missed = Array.new
+    puts "Would you like to play a (n)ew game or (l)oad a saved one?"
+    choice = gets.chomp
+    if choice == 'l'
+      #load a saved game
+    else
+      round = 1
+      stick_man = 0
+      missed = Array.new
     
-    until stick_man == 6
-      if answer.chars == guess
-        puts "You win! It was '#{answer}!'"
-        break
-      end
-      puts "Round #{round}"
-      puts
-      puts guess.join(" ")
-      puts
-      puts "Missed:"
-      puts missed.join(", ")
-      puts
-      print "Guess? "
-      letter = gets.chomp
-      puts
-      if answer.include?(letter) && !guess.include?(letter)
-        answer.chars.each_with_index do |x, index|
-          if letter == x
-            guess[index] = letter
-          end
-        end
-        round += 1
-        puts "Correct..."
-      elsif !missed.include?(letter) && !guess.include?(letter)
-        stick_man += 1
-        missed << letter
-        round += 1
-        puts "Wrong..."
-      else
-        puts "You already guessed that one!"
-      end
-      if stick_man == 6
-        puts "LOSER!" 
-        puts "It was '#{answer}'!"
-      else
-        puts "You've got #{6 - stick_man} guesses left..."
+      until stick_man == 6
+        puts "Round #{round}"
         puts
+        puts guess.join(" ")
+        puts
+        puts "Missed:"
+        puts missed.join(", ")
+        puts
+        puts "(enter '*' if you'd like to save and quit)"
+        print "Enter your guess: "
+      
+        letter = gets.chomp
+        puts
+        if answer.include?(letter) && !guess.include?(letter)
+          answer.chars.each_with_index do |x, index|
+            if letter == x
+              guess[index] = letter
+            end
+          end
+          round += 1
+          puts "Correct..."
+        elsif letter == '*'
+          filename = "#{guess.join("")}.erb"
+          Dir.mkdir("saved_games") unless Dir.exists? "saved_games"
+          File.open("saved_games/#{filename}", 'w') do |file|
+              file.puts "guess = #{guess}"
+              file.puts "answer = #{answer}"
+              file.puts "stick_man = #{stick_man}"
+              file.puts "round = #{round}"
+              file.puts "missed = #{missed}"
+
+          end
+          puts "#{filename} SAVED!"
+          break
+        elsif !missed.include?(letter) && !guess.include?(letter)
+          stick_man += 1
+          missed << letter
+          round += 1
+          puts "Wrong..."
+        else
+          puts "You already guessed that one!"
+        end
+        if answer.chars == guess
+          puts "You win! It was '#{answer}!'"
+          break
+        elsif stick_man == 6
+          puts "LOSER!" 
+          puts "It was '#{answer}'!"
+        else
+          puts "You've got #{6 - stick_man} wrong answers left..."
+          puts
+        end
       end
     end
-  end
-
-  def play_round
-
-
   end
 
 end
@@ -95,4 +99,3 @@ end
 Game.new.play
 
 #probably break up the play method into a few other methods
-#move the correct... youve got x guesses left so if you win it doesn't show
