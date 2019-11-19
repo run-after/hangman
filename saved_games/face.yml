@@ -1,0 +1,13 @@
+---
+guess:
+- p
+- _
+- d
+- d
+- e
+- d
+answer: padded
+round: 5
+stick_man: 1
+missed:
+- o

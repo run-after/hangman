@@ -1,3 +1,9 @@
+require "yaml"
+
+class progress
+
+end
+
 class Computer
   attr_reader :word
   def initialize
@@ -21,27 +27,34 @@ class Player
 end
 
 class Game
-    attr_reader :answer
-    attr_reader :guess
+
+    attr_reader :progress
   def initialize
     @answer = Computer.new.word_selection
-    @guess = Player.new(answer.length).guess
+    @guess = Player.new(@answer.length).guess
+    @progress = {'answer' => @answer, 'guess' => @guess, 'round' => 1, 
+    'stick_man' => 0, 'missed' => Array.new}
+  end
+
+  def load_file
+    print "Enter a filename: "
+    filename = gets.chomp
+    output = File.new("saved_games/#{filename}.yml", 'r')
+    @progress = YAML.load(output.read)
+    output.close
   end
   
   def play
-    puts "Would you like to play a (n)ew game or (l)oad a saved one?"
+    puts "Type 'load' if you want to load a game or press any key"
     choice = gets.chomp
-    if choice == 'l'
-      print "Enter a filename: "
-      filename = gets.chomp
-      loaded_game = File.readlines("saved_games/#{filename}")
-        loaded_game.each do |line|
-         p line   
-      end
-    else
-      round = 1
-      stick_man = 0
-      missed = Array.new
+    if choice == 'load'
+      load_file()
+    end
+        round = progress['round']
+        stick_man = progress['stick_man']
+        missed = progress['missed']
+        guess = progress['guess']
+        answer = progress['answer']
     
       until stick_man == 6
         puts "Round #{round}"
@@ -65,18 +78,17 @@ class Game
           round += 1
           puts "Correct..."
         elsif letter == '*'
+          @progress = {'guess' => guess, 'answer' => answer, 
+                        'round' => round, 'stick_man' => stick_man, 
+                        'missed' => missed}
           print "Enter filename: "
-          filename = "#{gets.chomp}.csv"
+          filename = "#{gets.chomp}.yml"
           Dir.mkdir("saved_games") unless Dir.exists? "saved_games"
-          File.open("saved_games/#{filename}", 'w') do |file|
+          output = File.open("saved_games/#{filename}", 'w')
+            output.puts YAML.dump(@progress)
+            output.close
 
-              file.puts "guess: #{guess}"
-              file.puts "answer: #{answer}"
-              file.puts "stick_man: #{stick_man}"
-              file.puts "round: #{round}"
-              file.puts "missed: #{missed}"
-
-          end
+          
           puts "#{filename} SAVED!"
           break
         elsif !missed.include?(letter) && !guess.include?(letter)
@@ -98,11 +110,11 @@ class Game
           puts
         end
       end
-    end
   end
 
 end
 
 Game.new.play
 
-#probably break up the play method into a few other methods
+#works great... but would like to clean it up a bit like try to save a
+#class instead of a hash
