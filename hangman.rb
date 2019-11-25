@@ -1,9 +1,5 @@
 require "yaml"
 
-class progress
-
-end
-
 class Computer
   attr_reader :word
   def initialize
@@ -116,5 +112,3 @@ end
 
 Game.new.play
 
-#works great... but would like to clean it up a bit like try to save a
-#class instead of a hash
